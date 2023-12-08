@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.krutov.crudspring.models.Person;
 
@@ -14,6 +15,8 @@ import java.util.List;
 @Component
 public class PersonDao {
 
+    private final RowMapper<Person> rowMapper = new PersonRowMapper();
+
     private final JdbcTemplate jdbcTemplate;
     @Autowired
     public PersonDao(JdbcTemplate jdbcTemplate){
@@ -21,7 +24,7 @@ public class PersonDao {
     }
 
     public List<Person> index(){
-        return jdbcTemplate.query("Select * From Person", new BeanPropertyRowMapper<>(Person.class));
+        return jdbcTemplate.query("Select * From Person", rowMapper);
     }
    public  Person show(int id){
         return jdbcTemplate.query("Select * From Person Where id = ?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
@@ -86,5 +89,18 @@ public class PersonDao {
             people.add(new Person(i, "Name"+i,30,"test"+i+"@mail.ru"));
         }
         return people;
+    }
+
+    private static class PersonRowMapper implements RowMapper<Person>{
+
+        @Override
+        public Person mapRow(ResultSet rs, int rowNum) throws SQLException {
+            return new Person(
+                    rs.getInt("id"),
+                    rs.getString("name"),
+                    rs.getInt("age"),
+                    rs.getString("email")
+            );
+        }
     }
 }
