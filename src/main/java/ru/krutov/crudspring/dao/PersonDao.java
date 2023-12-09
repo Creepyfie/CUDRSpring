@@ -32,12 +32,12 @@ public class PersonDao {
     }
     public void save(Person person){
 
-        jdbcTemplate.update("Insert Into Person VALUES (1,?,?,?)"
+        jdbcTemplate.update("Insert Into Person(name, age, email) VALUES (?,?,?)"
                 ,person.getName(),person.getAge(),person.getEmail());
     }
 
     public void update(int id, Person updperson){
-        jdbcTemplate.update("UPDATE  From Person SET name =?, age =?, email = ?, id = 1", updperson.getName(),updperson.getAge(),updperson.getEmail());
+        jdbcTemplate.update("UPDATE Person SET name =?, age =?, email = ?", updperson.getName(),updperson.getAge(),updperson.getEmail());
 
     }
 
@@ -53,8 +53,8 @@ public class PersonDao {
 
         long before = System.currentTimeMillis();
         for (Person person: people){
-            jdbcTemplate.update("Insert Into Person VALUES (?,?,?,?)"
-                    ,person.getId(),person.getName(),person.getAge(),person.getEmail());
+            jdbcTemplate.update("Insert Into Person(name, age, email) VALUES (?,?,?)"
+                    ,person.getName(),person.getAge(),person.getEmail());
         }
         long after= System.currentTimeMillis();
         System.out.println("Time " + (after-before));
