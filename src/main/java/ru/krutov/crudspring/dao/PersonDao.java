@@ -11,6 +11,7 @@ import ru.krutov.crudspring.models.Person;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class PersonDao {
@@ -29,6 +30,10 @@ public class PersonDao {
    public  Person show(int id){
         return jdbcTemplate.query("Select * From Person Where id = ?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
                 .stream().findAny().orElse(null);
+    }
+
+    public Optional<Person> show(String email){
+        return jdbcTemplate.query("Select * From Person Where email = ?", new Object[]{email}, rowMapper).stream().findAny();
     }
     public void save(Person person){
 

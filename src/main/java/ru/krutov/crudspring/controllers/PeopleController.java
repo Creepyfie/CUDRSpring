@@ -8,14 +8,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import ru.krutov.crudspring.dao.PersonDao;
 import ru.krutov.crudspring.models.Person;
+import ru.krutov.crudspring.util.PersonValidator;
 
 @Controller
 @RequestMapping("/people")
 public class PeopleController {
+
+    private final PersonValidator personValidator;
+
     private final PersonDao personDao;
 
     @Autowired
-    public PeopleController(PersonDao personDao) {
+    public PeopleController(PersonValidator personValidator, PersonDao personDao) {
+        this.personValidator = personValidator;
         this.personDao = personDao;
     }
 
@@ -40,6 +45,7 @@ public class PeopleController {
 
     @PostMapping()
     public  String create(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult) {
+        personValidator.validate(person,bindingResult);
         if(bindingResult.hasErrors())
             return "people/new";
 
@@ -57,6 +63,7 @@ public class PeopleController {
     @PatchMapping("/{id}")
     public String update(@ModelAttribute("person") @Valid Person person, BindingResult bindingResult,
                          @PathVariable("id") int id){
+        personValidator.validate(person,bindingResult);
         if(bindingResult.hasErrors())
             return "people/edit";
         personDao.update(id, person);
