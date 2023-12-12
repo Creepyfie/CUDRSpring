@@ -28,7 +28,7 @@ public class PersonDao {
         return jdbcTemplate.query("Select * From Person", rowMapper);
     }
    public  Person show(int id){
-        return jdbcTemplate.query("Select * From Person Where id = ?", new Object[]{id}, new BeanPropertyRowMapper<>(Person.class))
+        return jdbcTemplate.query("Select * From Person Where id = ?", new Object[]{id}, rowMapper)
                 .stream().findAny().orElse(null);
     }
 
@@ -37,12 +37,15 @@ public class PersonDao {
     }
     public void save(Person person){
 
-        jdbcTemplate.update("Insert Into Person(name, age, email) VALUES (?,?,?)"
-                ,person.getName(),person.getAge(),person.getEmail());
+        jdbcTemplate.update("Insert Into Person(name, age, email, address) VALUES (?,?,?,?)"
+                ,person.getName(),person.getAge(),person.getEmail(),person.getAddress());
     }
 
     public void update(int id, Person updperson){
-        jdbcTemplate.update("UPDATE Person SET name =?, age =?, email = ?", updperson.getName(),updperson.getAge(),updperson.getEmail());
+        jdbcTemplate.update("UPDATE Person SET name =?, age =?, email = ?, address = ? Where id = ?",
+                updperson.getName(),updperson.getAge(),
+                updperson.getEmail(),updperson.getAddress(),
+                id);
 
     }
 
@@ -58,8 +61,8 @@ public class PersonDao {
 
         long before = System.currentTimeMillis();
         for (Person person: people){
-            jdbcTemplate.update("Insert Into Person(name, age, email) VALUES (?,?,?)"
-                    ,person.getName(),person.getAge(),person.getEmail());
+            jdbcTemplate.update("Insert Into Person(name, age, email, address) VALUES (?,?,?,?)"
+                    ,person.getName(),person.getAge(),person.getEmail(), person.getAddress());
         }
         long after= System.currentTimeMillis();
         System.out.println("Time " + (after-before));
@@ -91,7 +94,7 @@ public class PersonDao {
         List<Person> people = new ArrayList<>();
 
         for(int i = 0;i<1000;i++){
-            people.add(new Person(i, "Name"+i,30,"test"+i+"@mail.ru"));
+            people.add(new Person(i, "Name"+i,30,"test"+i+"@mail.ru","some address"));
         }
         return people;
     }
@@ -104,7 +107,8 @@ public class PersonDao {
                     rs.getInt("id"),
                     rs.getString("name"),
                     rs.getInt("age"),
-                    rs.getString("email")
+                    rs.getString("email"),
+                    rs.getString("address")
             );
         }
     }
