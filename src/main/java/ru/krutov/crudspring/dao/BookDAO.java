@@ -1,16 +1,13 @@
 package ru.krutov.crudspring.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 import ru.krutov.crudspring.models.Book;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
-import java.util.Objects;
 
 @Component
 public class BookDAO {
@@ -24,18 +21,43 @@ public class BookDAO {
     }
 
     public List<Book> index(){
-
-
-        return jdbcTemplate.query("Select * From Books", rowMapper);
+        return jdbcTemplate.query("Select * From Book", rowMapper);
     }
 
     public Book show(int id){
-        return jdbcTemplate.query("Select * From Person Where id = ?", Objects[]{id},rowMapper);
+        return jdbcTemplate.query("Select * From Book Where book_id = ?",
+                new Object[]{id},rowMapper).stream().findAny().orElse(null);
     }
-    private  static class BookRowMapper implements RowMapper{
+
+    public void save(Book book){
+        jdbcTemplate.update("Insert Into Book(name, author, year) VALUES (?,?,?)"
+                ,book.getBookName(),book.getAuthor(),book.getYear());
+    }
+
+    public void update(int id, Book updBook){
+        jdbcTemplate.update("UPDATE Book SET name = ?, author = ?, year = ? Where book_id = ? ",
+                updBook.getBookName(),updBook.getAuthor(),updBook.getYear(),id);
+    }
+
+    public void unlink(int book_id){
+        jdbcTemplate.update("UPDATE Book SET person_id = ? Where book_id = ?", null, book_id);
+    }
+
+    public void link(int book_id, int person_id){
+        jdbcTemplate.update("UPDATE Book SET person_id = ? Where book_id = ?", person_id, book_id);
+    }
+
+    public void delete(int id){
+        jdbcTemplate.update("DELETE FROM Book WHERE book_id = ?",id);
+    }
+    public List<Book> search(int person_id){
+        return jdbcTemplate.query("Select * From Book Where person_id = ?", new Object[]{person_id},rowMapper);
+    }
+
+    private  static class BookRowMapper implements RowMapper<Book>{
 
         @Override
-        public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public Book mapRow(ResultSet rs, int rowNum) throws SQLException {
             return new Book(rs.getInt("book_id"),
                     rs.getInt("person_id"),
                     rs.getString("name"),

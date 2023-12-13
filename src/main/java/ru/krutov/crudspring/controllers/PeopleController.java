@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import ru.krutov.crudspring.dao.BookDAO;
 import ru.krutov.crudspring.dao.PersonDao;
 import ru.krutov.crudspring.models.Person;
 import ru.krutov.crudspring.util.PersonValidator;
@@ -17,11 +18,13 @@ public class PeopleController {
     private final PersonValidator personValidator;
 
     private final PersonDao personDao;
+    private final BookDAO bookDAO;
 
     @Autowired
-    public PeopleController(PersonValidator personValidator, PersonDao personDao) {
+    public PeopleController(PersonValidator personValidator, PersonDao personDao, BookDAO bookDAO) {
         this.personValidator = personValidator;
         this.personDao = personDao;
+        this.bookDAO = bookDAO;
     }
 
     @GetMapping()
@@ -33,8 +36,9 @@ public class PeopleController {
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
-        //Получим 1 человека их  дао и передадим на отображение в представление
+        //Получим 1 человека из  дао и передадим на отображение в представление
         model.addAttribute("person",personDao.show(id));
+        model.addAttribute("books",bookDAO.search(id));
         return "people/show";
     }
 

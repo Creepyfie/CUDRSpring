@@ -4,24 +4,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
-import ru.krutov.crudspring.dao.PersonDao;
-import ru.krutov.crudspring.models.Person;
+import ru.krutov.crudspring.dao.BookDAO;
+import ru.krutov.crudspring.models.Book;
 @Component
-public class PersonValidator implements Validator {
+public class BookValidator implements Validator {
 
-    private PersonDao personDao;
-
+    private BookDAO bookDAO;
     @Autowired
-    public PersonValidator(PersonDao personDao){
-        this.personDao = personDao;
+    public BookValidator (BookDAO bookDAO){
+        this.bookDAO = bookDAO;
     }
+
     @Override
     public boolean supports(Class<?> clazz) {
-        return Person.class.equals(clazz);
+        return false;
     }
 
     @Override
     public void validate(Object target, Errors errors) {
-        Person person = (Person) target;
+
+        Book book = (Book) target;
+
     }
 }

@@ -6,13 +6,24 @@
 </head>
 <body>
 
-<p th:text="${person.getName() + ' ,' + person.getAge()}">Value</p>
-<p th:text="${'Email: ' + person.getEmail()}">value</p>
-<p th:text="${person.getId()}">value</p>
-<p th:text="${person.getAddress()}">value</p>
-<a th:href="@{/people/{id}/edit(id=${person.getId()})}">Edit</a>
+<p th:text="${person.getName() + ' ,' + person.getBirthYear()}">Value</p>
 
-<form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}">
+<div th:if="${not books.isEmpty()}">
+  <p>Книги: </p>
+  <div th:each="book :${books}">
+    <p th:text="${book.getBookName() + ', ' + book.getAuthor() + ', ' + book.getYear()}" >book</p>
+  </div>
+</div>
+<div th:unless="${not books.isEmpty()}">
+  <p>Человек пока не взял ни одной книги</p>
+</div>
+
+<hr/>
+<br/>
+<a th:href="@{/people/{id}/edit(id=${person.getPerson_id()})}">Edit</a>
+
+
+<form th:method="DELETE" th:action="@{/people/{id}(id=${person.getPerson_id()})}">
 
   <input type = "submit" value="Delete" />
 

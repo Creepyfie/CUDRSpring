@@ -1,9 +1,7 @@
 package ru.krutov.crudspring.models;
 
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+
 
 public class Book {
     private int book_id;
@@ -18,12 +16,10 @@ public class Book {
     @Size(min = 2, max = 50)
     private  String author;
     @Positive
-    @Pattern(regexp = "\\d{4}")
+    @Min(0)
+    @Max(2023)
+    //@Pattern(regexp = "\\d{4}")
     private int year;
-    public int getBook_id() {
-        return book_id;
-    }
-
     public Book(){
 
     }
@@ -34,6 +30,10 @@ public class Book {
         this.bookName = bookName;
         this.author = author;
         this.year = year;
+    }
+
+    public int getBook_id() {
+        return book_id;
     }
 
     public int getPerson_id() {
@@ -71,6 +71,5 @@ public class Book {
     public void setYear(int year) {
         this.year = year;
     }
-
 
 }
